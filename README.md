@@ -1,2 +1,2 @@
-# Multifunctional_Chatbot
-This chatbot pocesses different functionalities like, Text to Text, image classification, audio to text.
+# Multifunctional_Chatbot🤖
+This chatbot offers various functionalities, including text-to-text, image classification, and audio-to-text.
