@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multifunctional_Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #FFD700 20%, #FF6A00 40%, #FF3E3E 70%, #7B2FF7 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            position: sticky;
+            top: 30px;
+            left: 550px;
+            width: 50px;
+            height: 50px;
+        }
+
+        .history-section {
+            border: 2px solid #fff;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            width: 80%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .message {
+            margin: 5px 0;
+        }
+
+        .user-message {
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .bot-response {
+            color: #32CD32;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        input[type="text"], input[type="file"] {
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 20px;
+            border: none;
+            width: 300px;
+            background: radial-gradient(circle at bottom left, #ffffff, #a3d8ff 30%, #8a8fff 60%, #d3a9f9 85%, #e5bff9 100%);
+            color: #333;
+            box-shadow: 4px 8px rgba(131, 115, 238, .3);
+            transition: filter .3s ease, box-shadow .3s ease;
+        }
+
+        .gradient-button {
+            position: relative;
+            background: radial-gradient(circle at bottom left, #ffffff, #a3d8ff 30%, #8a8fff 60%, #d3a9f9 85%, #e5bff9 100%);
+            border: none;
+            color: #333;
+            margin-top: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 4px 8px rgba(131, 115, 238, .3);
+            transition: filter .3s ease, box-shadow .3s ease;
+        }
+
+        .gradient-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0));
+            border-radius: 20px 20px 0 0;
+            pointer-events: none;
+        }
+
+        .gradient-button:hover {
+            filter: brightness(1.1);
+            box-shadow: 6px 12px rgba(131, 115, 238, .5);
+        }
+
+        .input-container button {
+            margin-top: 15px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Logo on the top left -->
+    <img src="static\uploads\multibotLogo.png" alt="Logo" class="logo">
+
+    <h1>Multifunctional_Chatbot</h1>
+
+    <!-- History Section -->
+    <div class="history-section">
+        {% for entry in history %}
+            <div class="message">
+                {% if entry.type == 'text' %}
+                    <p class="user-message">{{ entry.input }}</p>
+                    <p class="bot-response">{{ entry.response }}</p>
+                {% elif entry.type == 'image' %}
+                    <p class="user-message">Uploaded Image: <img src="{{ url_for('static', filename='uploads/' + entry.input) }}" width="100"></p>
+                    <p class="bot-response">{{ entry.response }}</p>
+                {% elif entry.type == 'voice' %}
+                    <p class="user-message">Voice Input: {{ entry.input }}</p>
+                    <p class="bot-response">{{ entry.response }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Text Input -->
+    <div class="input-container">
+        <input type="text" id="textInput" placeholder="Ask me anything" />
+        <button class="gradient-button" onclick="sendText()">Send</button>
+    </div>
+
+    <!-- Image Upload -->
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="image" id="imageInput" />
+        <button class="gradient-button" type="submit">Upload Image</button>
+    </form>
+
+    <!-- Voice Input -->
+    <button class="gradient-button" onclick="startVoice()">Record Voice</button>
+
+    <script>
+        function sendText() {
+            const text = document.getElementById('textInput').value;
+            fetch('/generate', {
+                method: 'POST',
+                body: new URLSearchParams({ 'content': text })
+            }).then(response => response.json())
+              .then(data => {
+                  alert("Bot Response: " + data.text);
+                  location.reload();
+              });
+        }
+
+        document.getElementById('uploadForm').onsubmit = function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('image', document.getElementById('imageInput').files[0]);
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+              .then(data => {
+                  location.reload();
+              });
+        };
+
+        function startVoice() {
+            fetch('/listen', {
+                method: 'POST'
+            }).then(response => response.json())
+              .then(data => {
+                  alert("Bot Response: " + data.text);
+                  location.reload();
+              });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
