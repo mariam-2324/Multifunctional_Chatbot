@@ -195,4 +195,11 @@ This Flask app integrates cutting-edge functionalities such as **speech recognit
 
 * The image is passed to the Gemini AI model via the client.models.generate_content API call for analysis.
 
-* The analysis result (text) returned by the AI is displayed on the web page alongside the      uploaded image.
+* The analysis result (text) returned by the AI is displayed on the web page alongside the uploaded image.
+
+
+
+
+### Image Here 🖼️
+
+![MultifunctionalChatbot](multi-bot.PNG)
